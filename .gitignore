@@ -3,7 +3,7 @@
 *.dSYM
 *.csv
 *.out
-*.png
+#*.png
 mnist/
 #data/
 caffe/
