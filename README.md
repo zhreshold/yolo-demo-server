@@ -1,3 +1,6 @@
+A Flask micro demo server based on tiny YOLO detection model, powered by Darkent.
+
+
 ![Darknet Logo](http://pjreddie.com/media/files/darknet-black-small.png)
 
 #Darknet#
