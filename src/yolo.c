@@ -9,8 +9,8 @@
 #include "opencv2/highgui/highgui_c.h"
 #endif
 
-char *voc_names[] = {"door", "chair"};
-image voc_labels[2];
+char *voc_names[] = {"YUXI0", "YUXI1", "GUIYAN"};
+image voc_labels[3];
 
 void train_yolo(char *cfgfile, char *weightfile)
 {
@@ -366,7 +366,7 @@ void test_yolo(char *cfgfile, char *weightfile, char *filename, float thresh)
     
         if (nms) do_nms_sort(boxes, probs, l.side*l.side*l.n, l.classes, nms);
 	char *basename = get_basename(filename);
-        draw_detections(basename,im, l.side*l.side*l.n, thresh, boxes, probs, voc_names, voc_labels, 2);
+        draw_detections(basename,im, l.side*l.side*l.n, thresh, boxes, probs, voc_names, voc_labels, 3);
         //draw_detections(im, l.side*l.side*l.n, thresh, boxes, probs, voc_names, 0, 2);
         //show_image(im, filename2);
         save_image(im, basename);
@@ -424,7 +424,7 @@ void demo_yolo(char *cfgfile, char *weightfile, float thresh, int cam_index, cha
 void run_yolo(int argc, char **argv)
 {
     int i;
-    for(i = 0; i < 2; ++i){
+    for(i = 0; i < 3; ++i){
         char buff[256];
         sprintf(buff, "data/labels/%s.png", voc_names[i]);
         voc_labels[i] = load_image_color(buff, 0, 0);

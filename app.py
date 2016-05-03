@@ -65,7 +65,7 @@ def upload():
             pass
         # Redirect the user to the uploaded_file route, whicuploadh
         # will basicaly show on the browser the uploaded file
-	cmd = "./darknet yolo test cfg/cpuNet6.cfg cpuNet6.weights %s%s" % (app.config['UPLOAD_FOLDER'], filename)
+	cmd = "./darknet yolo test cfg/yolo-cigarette.cfg yolo-cigarette.weights %s%s" % (app.config['UPLOAD_FOLDER'], filename)
 	try:
 	    stdout_result = subprocess.check_output(cmd, shell=True)
 	    info = stdout_result.split(':')[1:]
@@ -100,7 +100,7 @@ def root_file(filename):
 if __name__ == '__main__':
     app.run(
         host="0.0.0.0",
-        port=int("8080"),
+        port=int("8000"),
         debug=False
     )
 
