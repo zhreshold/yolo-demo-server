@@ -14,6 +14,10 @@ convnet/
 decaf/
 submission/
 darknet
+/output/*
+/uploads/*
+!/output/README.md
+!/uploads/README.md
 
 # OS Generated #
 .DS_Store*
