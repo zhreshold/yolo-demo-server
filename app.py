@@ -7,16 +7,31 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, Markup
 from werkzeug import secure_filename
 import subprocess
+import cv2
 
 # Initialize the Flask application
 app = Flask(__name__)
 
+# Size limit
+app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024
 # This is the path to the upload directory
 app.config['UPLOAD_FOLDER'] = 'uploads/'
 # These are the extension that we are accepting to be uploaded
-app.config['ALLOWED_EXTENSIONS'] = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+app.config['ALLOWED_EXTENSIONS'] = set(['png', 'jpg', 'jpeg', 'bmp'])
 # Result folder
 app.config['OUTPUT_FOLDER'] = 'output/'
+
+def adaptive_resize(filename, max_size=640):
+    img = cv2.imread(filename, 1)
+    h, w, _ = img.shape
+    ratio1 = float(max_size) / h
+    ratio2 = float(max_size) / w
+    ratio = min(ratio1, ratio2)
+    if ratio >= 1:
+        return
+    img = cv2.resize(img, (int(ratio*w), int(ratio*h)))
+    cv2.imwrite(filename, img)
+    
 
 # For a given file, return whether it's an allowed type or not
 def allowed_file(filename):
@@ -44,6 +59,10 @@ def upload():
         # Move the file form the temporal folder to
         # the upload folder we setup
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        try:
+            adaptive_resize(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        except:
+            pass
         # Redirect the user to the uploaded_file route, whicuploadh
         # will basicaly show on the browser the uploaded file
 	cmd = "./darknet yolo test cfg/cpuNet6.cfg cpuNet6.weights %s%s" % (app.config['UPLOAD_FOLDER'], filename)
@@ -58,6 +77,7 @@ def upload():
         except:
 	    return render_template('result.html', filename=os.path.join(app.config['UPLOAD_FOLDER'], filename), result_text="Unexpected error occured, terminate detection.")
         #return redirect(url_for('uploaded_file', filename=filename))
+    return "Invalid file or format"
 
 # This route is expecting a parameter containing the name
 # of a file. Then it will locate that file on the upload
