@@ -93,6 +93,10 @@ def output_file(filename):
     return send_from_directory(app.config['OUTPUT_FOLDER'],
                                filename)
 
+@app.route('/<filename>')
+def root_file(filename):
+    return send_from_directory('./', filename)
+
 if __name__ == '__main__':
     app.run(
         host="0.0.0.0",
