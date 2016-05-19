@@ -9,13 +9,21 @@
 #include "opencv2/highgui/highgui_c.h"
 #endif
 
-char *voc_names[] = {"door", "chair"};
-image voc_labels[2];
+/* Change class number here */
+#define CLASSNUM 16
+
+/* Change class names here */
+char *voc_names[] = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P"};
+image voc_labels[CLASSNUM];
 
 void train_yolo(char *cfgfile, char *weightfile)
 {
-    char *train_images = "/data/voc/train.txt";
-    char *backup_directory = "/home/pjreddie/backup/";
+ /* Change training folders here */
+    char *train_images = "/home/kxlong/BBoxLabelTool/cigaretteall--list.txt";
+
+    /* Change output weight folders here */
+    char *backup_directory = "/home/kxlong/BBoxLabelTool/";
+
     srand(time(0));
     data_seed = time(0);
     char *base = basecfg(cfgfile);
@@ -71,7 +79,7 @@ void train_yolo(char *cfgfile, char *weightfile)
         avg_loss = avg_loss*.9 + loss*.1;
 
         printf("%d: %f, %f avg, %f rate, %lf seconds, %d images\n", i, loss, avg_loss, get_current_rate(net), sec(clock()-time), i*imgs);
-        if(i%1000==0 || i == 600){
+        if(i%5000==0 || i == 50){
             char buff[256];
             sprintf(buff, "%s/%s_%d.weights", backup_directory, base, i);
             save_weights(net, buff);
@@ -366,7 +374,7 @@ void test_yolo(char *cfgfile, char *weightfile, char *filename, float thresh)
     
         if (nms) do_nms_sort(boxes, probs, l.side*l.side*l.n, l.classes, nms);
 	char *basename = get_basename(filename);
-        draw_detections(basename,im, l.side*l.side*l.n, thresh, boxes, probs, voc_names, voc_labels, 2);
+        draw_detections(basename,im, l.side*l.side*l.n, thresh, boxes, probs, voc_names, voc_labels, CLASSNUM);
         //draw_detections(im, l.side*l.side*l.n, thresh, boxes, probs, voc_names, 0, 2);
         //show_image(im, filename2);
         save_image(im, basename);
@@ -424,7 +432,7 @@ void demo_yolo(char *cfgfile, char *weightfile, float thresh, int cam_index, cha
 void run_yolo(int argc, char **argv)
 {
     int i;
-    for(i = 0; i < 2; ++i){
+    for(i = 0; i < CLASSNUM; ++i){
         char buff[256];
         sprintf(buff, "data/labels/%s.png", voc_names[i]);
         voc_labels[i] = load_image_color(buff, 0, 0);
